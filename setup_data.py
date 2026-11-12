@@ -16,7 +16,7 @@ def download_if_missing(url, dest):
     """Download `url` to `dest` unless `dest` exists. Returns True when the file was written.
 
     The download goes to a temporary name first and is kept only when wget succeeds
-    and the file is not an HTML page, so a failed download never leaves a bad file at `dest`.
+    and the file is not empty and not an HTML page, so a failed download never leaves a bad file at `dest`.
     """
     if os.path.exists(dest):
         return False
@@ -27,7 +27,7 @@ def download_if_missing(url, dest):
             return False
         with open(part, "rb") as f:
             head = f.read(512).lstrip().lower()
-        if head.startswith((b"<!doctype html", b"<html")):
+        if not head or head.startswith((b"<!doctype html", b"<html")):
             return False
         os.replace(part, dest)
         return True

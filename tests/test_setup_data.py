@@ -73,6 +73,12 @@ class DownloadIfMissingTest(unittest.TestCase):
             self.assertFalse(setup_data.download_if_missing("http://x/y", self.dest))
         self.assertEqual(os.listdir(os.path.dirname(self.dest)), [])
 
+    def test_empty_body_is_not_kept(self):
+        for body in (b"", b"  \n"):
+            with self._wget(body):
+                self.assertFalse(setup_data.download_if_missing("http://x/y", self.dest))
+            self.assertEqual(os.listdir(os.path.dirname(self.dest)), [])
+
     def test_failed_download_leaves_nothing(self):
         with self._wget(b"partial", status=8):
             self.assertFalse(setup_data.download_if_missing("http://x/y", self.dest))

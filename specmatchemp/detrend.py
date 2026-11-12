@@ -98,7 +98,8 @@ class Detrend(object):
                                ((dr_r_2 - dr_r_1) / (uncal_2 - uncal_1)) +
                                dr_r_1)
 
-                return value - dr_r_target * value
+                # dr_r = (uncal - cal) / cal, so cal = uncal / (1 + dr_r)
+                return value / (1 + dr_r_target)
             else:
                 return ((value - uncal_1) *
                         ((cal_2 - cal_1) / (uncal_2 - uncal_1)) +

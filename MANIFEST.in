@@ -3,3 +3,5 @@ include bin/*
 include docs/*
 include catalogs/*
 include refs/*
+include setup_data.py
+include uncertainties.csv

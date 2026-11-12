@@ -1,6 +1,8 @@
 import os, sys
 from setuptools import setup, find_packages
 
+from setup_data import copy_if_missing, download_if_missing
+
 on_rtd = os.environ.get('READTHEDOCS') == 'True'
 shift_only = False
 if "--shift-only" in sys.argv:
@@ -63,14 +65,16 @@ else:
         if not os.path.exists(LIBPATH):
             os.system("wget --no-check-certificate --output-document=${HOME}/.specmatchemp/library.h5 https://www.dropbox.com/s/po0kzgjn1j9ha2v/library.h5#")
 
-    # Additional csv files
+    # Additional csv files. Existing files are never overwritten. uncertainties.csv
+    # comes from this repository; the other two are downloaded only when missing.
+    here = os.path.dirname(os.path.abspath(__file__))
+    copy_if_missing(os.path.join(here, "uncertainties.csv"),
+                    os.path.join(SPECMATCHDIR, "uncertainties.csv"))
     csv_urls = ["https://www.dropbox.com/s/8wv38eb8dzg1ou2/hires_telluric_mask.csv#",
-                "https://www.dropbox.com/s/ugqzpux73mgjuyj/detrend.csv#",
-                "https://www.dropbox.com/s/lxz0cb57a8xvsfl/uncertainties.csv#"]
+                "https://www.dropbox.com/s/ugqzpux73mgjuyj/detrend.csv#"]
     for f in csv_urls:
         outfile = os.path.join(SPECMATCHDIR,f.split('/')[-1][:-1])
-        cmd = "wget --no-check-certificate {} -O {}".format(f,outfile)
-        os.system(cmd)
+        download_if_missing(f, outfile)
 
     specdir = os.path.join(SPECMATCHDIR, 'shifted_spectra')
     if not os.path.exists(specdir):

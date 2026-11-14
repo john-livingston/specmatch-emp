@@ -5,3 +5,5 @@ include catalogs/*
 include refs/*
 include setup_data.py
 include uncertainties.csv
+include detrend.csv
+include hires_telluric_mask.csv

@@ -1,7 +1,12 @@
-"""Helpers for setup.py to put the data files in ~/.specmatchemp without overwriting existing ones."""
+"""Helpers for setup.py to put the data files in ~/.specmatchemp without overwriting existing ones.
+
+The csv tables ship in the repository. download_if_missing is for the large library files."""
 import os
 import shutil
 import subprocess
+
+# The csv tables that ship in the repository (beside setup.py) and go to ~/.specmatchemp.
+DATA_FILES = ("uncertainties.csv", "detrend.csv", "hires_telluric_mask.csv")
 
 
 def copy_if_missing(src, dest):
@@ -10,6 +15,19 @@ def copy_if_missing(src, dest):
         return False
     shutil.copyfile(src, dest)
     return True
+
+
+def install_data_files(src_dir, dest_dir):
+    """Copy each file of DATA_FILES from `src_dir` to `dest_dir` unless it is already there.
+
+    Creates `dest_dir` when needed and never overwrites or downloads. Returns the names that were copied.
+    """
+    os.makedirs(dest_dir, exist_ok=True)
+    return [
+        name
+        for name in DATA_FILES
+        if copy_if_missing(os.path.join(src_dir, name), os.path.join(dest_dir, name))
+    ]
 
 
 def download_if_missing(url, dest):
